@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>شكون يكذب؟</title>
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background-image: url('backtn.jpg'); /* Set background image */
+      background-size: cover;
+      background-position: center;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #ff4747;
+      margin-top: 20px;
+    }
+    h2 {
+      font-size: 1.3rem;
+      color: #ff4747;
+    }
+    .button {
+      background-color: #ff4747;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 15px 0;
+      width: 80%;
+    }
+    .button:hover {
+      background-color: #d43f3f;
+    }
+    select, input {
+      padding: 10px;
+      border-radius: 5px;
+      width: 80%;
+      margin: 10px 0;
+      font-size: 1rem;
+    }
+    .instagram-link {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+    }
+    .instagram-link img {
+      width: 40px;
+      height: 40px;
+    }
+
+    /* Mobile responsive styles */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      h2 {
+        font-size: 1.2rem;
+      }
+      .button {
+        font-size: 0.9rem;
+      }
+      .instagram-link img {
+        width: 35px;
+        height: 35px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div>
+    <h1>💬 شكون يكذب؟</h1>
+
+    <!-- Step 1: Choose Theme -->
+    <div id="step1">
+      <h2>اختار الثيم</h2>
+      <select id="themeSelect">
+        <option value="ماكلة تونسية">ماكلة تونسية</option>
+        <option value="أماكن">أماكن</option>
+        <option value="وظائف">وظائف</option>
+      </select>
+      <br>
+      <button class="button" onclick="goToStep2()">التالي</button>
+    </div>
+
+    <!-- Step 2: Choose Player Count -->
+    <div id="step2" style="display:none;">
+      <h2>اختار عدد اللاعبين</h2>
+      <input type="number" id="playerCount" min="3" max="10" value="4">
+      <br>
+      <button class="button" onclick="startGame()">ابدأ اللعبة</button>
+    </div>
+
+    <!-- Step 3: Show Player's Word -->
+    <div id="step3" style="display:none;">
+      <h2>اللاعب <span id="currentPlayer">1</span>، شوف دورك</h2>
+      <button class="button" onclick="revealWord()">كشف</button>
+      <p id="wordDisplay" style="display:none;"></p>
+      <button class="button" onclick="nextPlayer()">التالي</button>
+    </div>
+
+    <!-- Step 4: End Game -->
+    <div id="step4" style="display:none;">
+      <h2>اللعبة بدات! ناقشوا و اكتشفوا الجاسوس!</h2>
+      <button class="button" onclick="resetGame()">إعادة اللعبة</button>
+    </div>
+
+    <!-- Instagram Link -->
+    <a href="https://www.instagram.com/mosaab_abassi/" target="_blank" class="instagram-link">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram Icon">
+    </a>
+  </div>
+
+  <script>
+    let currentStep = 1;
+    let playerCount = 4;
+    let players = [];
+    let spyIndex = null;
+    let currentPlayer = 0;
+    let revealed = false;
+    let selectedTheme = "ماكلة تونسية";
+    const themes = {
+      "ماكلة تونسية": [
+        "كسكس", "بريك", "هريسة", "لبلابي", "بقلاوة", "طاجين (تونسّي)", "شوربة", "سلطة مشوية", "كفتاجي",
+        "عجة", "مرقاز", "فريكاسي", "زلابية", "شاورما", "رغايف", "كسكس باللحم", "بطاطا محشية", "شكشوكة",
+        "سمك مقلي", "بيتزا", "كرواسان", "ملوخية", "لازانيا", "غريبة", "سلطة تونسية", "كرات اللحم", "سردين",
+        "شاورما", "آيس كريم", "فطائر"
+      ],
+      "أماكن": [
+        "قهوة", "جامع", "سوق", "مكتبة", "مطعم", "شاطئ", "حديقة", "مدرسة", "مستشفى", "مطار",
+        "محطة قطار", "محطة بنزين", "مكتب", "مكتبة عامة", "مسرح", "نزل", "مغسلة", "ورشة", "مخبز",
+        "مركز تجاري", "غابة", "شقة", "مطبخ", "ملعب", "حديقة حيوانات", "محطة باص", "موقف سيارات",
+        "شاطئ البحر", "مكتب بريد", "صيدلية", "مستودع", "حافلة", "قاعة أفراح", "قاعة رياضة", "جامعة",
+        "حانة", "مسبح", "سفارة", "إدارة حكومية", "مقهى إنترنت", "سفينة", "مصنع", "قاعة سينما",
+        "كراج", "سجن", "ثكنة عسكرية", "ملعب جولف", "محطة مترو", "مدينة ملاهي", "كهف"
+      ],
+      "وظائف": [
+        "طبيب", "مهندس", "مدرس", "شرطي", "محامي", "فنان", "طباخ", "ممرض", "سائق", "صحفي",
+        "محاسب", "مبرمج", "طيار", "جندي", "كهربائي", "نجار", "سباك", "مصور", "ميكانيكي", "بائع",
+        "مدرب رياضي", "خياط", "كاتب", "مسوق", "فلاح", "عطار", "مدير", "مستشار", "أخصائي تغذية",
+        "مترجم", "محقق", "منتج", "مخرج", "محامي", "رائد فضاء", "عالم", "مساعد", "عازف موسيقى",
+        "طبيب أسنان", "بائع متجول", "أستاذ جامعي", "مدير فندق", "خطيب", "عامل بناء", "مصور فوتوغرافي",
+        "حلاق", "ممثل", "لاعب كرة قدم"
+      ]
+    };
+
+    function goToStep2() {
+      selectedTheme = document.getElementById("themeSelect").value;
+      document.getElementById("step1").style.display = "none";
+      document.getElementById("step2").style.display = "block";
+    }
+
+    function startGame() {
+      playerCount = parseInt(document.getElementById("playerCount").value);
+      const words = themes[selectedTheme];
+      const randomWord = words[Math.floor(Math.random() * words.length)];
+      spyIndex = Math.floor(Math.random() * playerCount);
+      players = Array.from({ length: playerCount }, (_, i) => (i === spyIndex ? "جاسوس" : randomWord));
+      document.getElementById("step2").style.display = "none";
+      document.getElementById("step3").style.display = "block";
+      updatePlayerInfo();
+    }
+
+    function updatePlayerInfo() {
+      document.getElementById("currentPlayer").innerText = currentPlayer + 1;
+      document.getElementById("wordDisplay").style.display = "none";
+    }
+
+    function revealWord() {
+      document.getElementById("wordDisplay").style.display = "block";
+      document.getElementById("wordDisplay").innerText = players[currentPlayer] === "جاسوس" ? 
+        "أنت الجاسوس!" : `كلمتك هي: ${players[currentPlayer]}`;
+    }
+
+    function nextPlayer() {
+      if (currentPlayer + 1 < playerCount) {
+        currentPlayer++;
+        revealed = false;
+        updatePlayerInfo();
+      } else {
+        document.getElementById("step3").style.display = "none";
+        document.getElementById("step4").style.display = "block";
+      }
+    }
+
+    function resetGame() {
+      currentStep = 1;
+      document.getElementById("step4").style.display = "none";
+      document.getElementById("step1").style.display = "block";
+    }
+  </script>
+
+</body>
+</html>
