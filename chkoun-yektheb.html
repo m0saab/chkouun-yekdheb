@@ -145,8 +145,8 @@
     let players = [];
     let spyIndex = null;
     let currentPlayer = 0;
-    let revealed = false;
     let selectedTheme = "ماكلة تونسية";
+    let secretWord = "";
     const themes = {
       "ماكلة تونسية": [
         "كسكسي", "ملوخية", "كمونية", "كفتاجي", "عجة", "مرقاز", "سلاطة مشوية", "عصيدة الزقوقو", "لبلابي",
@@ -185,56 +185,53 @@
         "كينغسلي كومان", "برونو فيرنانديش", "كاي هافيرتس", "دكلان رايس", "ليونيل ميسي", "كريستيانو رونالدو",
         "بيليه", "رونالدو نازاريو", "دييغو مارادونا", "يوهان كرويف", "لويس فيغو", "رونالدينيو", "آرلين روبين",
         "مانويل نوير", "فرانك لامبارد", "ديفيد بيكهام", "زين الدين زيدان", "أليساندرو ديل بييرو", "ريكياردو كاكا",
-        "سيرجيو بوسكيتس", "فرانك ريكارد", "توماس مولر", "راؤول غونزاليس", "غاريث بيل", "رايان جيغز", "إيكر كاسياس"
+        "سيرجيو بوسكيتس",  "توماس مولر", "راؤول غونزاليس", "غاريث بيل", "رايان جيغز", "إيكر كاسياس"
       ]
     };
 
     function goToStep2() {
-      selectedTheme = document.getElementById("themeSelect").value;
-      document.getElementById("step1").style.display = "none";
-      document.getElementById("step2").style.display = "block";
-    }
+    selectedTheme = document.getElementById("themeSelect").value;
+    document.getElementById("step1").style.display = "none";
+    document.getElementById("step2").style.display = "block";
+  }
 
-    function startGame() {
-      playerCount = document.getElementById("playerCount").value;
-      players = generatePlayers();
-      spyIndex = Math.floor(Math.random() * playerCount);
-      document.getElementById("step2").style.display = "none";
-      document.getElementById("step3").style.display = "block";
-      displayWord();
-    }
+  function startGame() {
+    playerCount = parseInt(document.getElementById("playerCount").value);
+    const words = themes[selectedTheme];
+    secretWord = words[Math.floor(Math.random() * words.length)];
+    spyIndex = Math.floor(Math.random() * playerCount);
+    players = Array.from({ length: playerCount }, (_, i) => ({
+      isSpy: i === spyIndex
+    }));
+    currentPlayer = 0;
+    document.getElementById("step2").style.display = "none";
+    document.getElementById("step3").style.display = "block";
+    document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+    document.getElementById("wordDisplay").style.display = "none";
+  }
 
-    function generatePlayers() {
-      return [...Array(playerCount)].map((_, i) => ({
-        name: `لاعب ${i + 1}`,
-        isSpy: i === spyIndex
-      }));
-    }
+  function revealWord() {
+    const wordDisplay = document.getElementById("wordDisplay");
+    wordDisplay.innerHTML = players[currentPlayer].isSpy ? "الجاسوس" : secretWord;
+    wordDisplay.style.display = "block";
+  }
 
-    function displayWord() {
-      const wordDisplay = document.getElementById("wordDisplay");
-      const words = themes[selectedTheme];
-      const word = words[Math.floor(Math.random() * words.length)];
-      wordDisplay.innerHTML = spyIndex === currentPlayer ? "الجاسوس" : word;
-      wordDisplay.style.display = "block";
+  function nextPlayer() {
+    currentPlayer++;
+    if (currentPlayer >= playerCount) {
+      document.getElementById("step3").style.display = "none";
+      document.getElementById("step4").style.display = "block";
+      return;
     }
+    document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+    document.getElementById("wordDisplay").style.display = "none";
+  }
 
-    function nextPlayer() {
-      currentPlayer++;
-      if (currentPlayer === playerCount) {
-        currentPlayer = 0;
-      }
-      document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-      revealed = false;
-      document.getElementById("wordDisplay").style.display = "none";
-    }
-
-    function resetGame() {
-      document.getElementById("step4").style.display = "none";
-      document.getElementById("step1").style.display = "block";
-      currentStep = 1;
-    }
-  </script>
-
+  function resetGame() {
+    document.getElementById("step4").style.display = "none";
+    document.getElementById("step1").style.display = "block";
+    currentStep = 1;
+  }
+</script>
 </body>
 </html>
