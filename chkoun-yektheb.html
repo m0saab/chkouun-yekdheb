@@ -97,6 +97,8 @@
         <option value="ماكلة تونسية">ماكلة تونسية</option>
         <option value="أماكن">أماكن</option>
         <option value="وظائف">وظائف</option>
+        <option value="لاعبين كرة قدم">لاعبين كرة قدم</option>
+        <option value="فاكهة وخضار">فاكهة وخضار</option>
       </select>
       <br>
       <button class="button" onclick="goToStep2()">التالي</button>
@@ -130,6 +132,14 @@
     </a>
   </div>
 
+  <!-- Fruits and Vegetables Section -->
+  <div id="fruitsAndVegetablesSection" style="display:none;">
+    <h2>فاكهة وخضار</h2>
+    <ul id="fruitsAndVegetablesList">
+      <!-- Fruits and Vegetables will be dynamically added here -->
+    </ul>
+  </div>
+
   <script>
     let currentStep = 1;
     let playerCount = 4;
@@ -140,10 +150,12 @@
     let selectedTheme = "ماكلة تونسية";
     const themes = {
       "ماكلة تونسية": [
-        "كسكس", "بريك", "هريسة", "لبلابي", "بقلاوة", "طاجين (تونسّي)", "شوربة", "سلطة مشوية", "كفتاجي",
-        "عجة", "مرقاز", "فريكاسي", "زلابية", "شاورما", "رغايف", "كسكس باللحم", "بطاطا محشية", "شكشوكة",
-        "سمك مقلي", "بيتزا", "كرواسان", "ملوخية", "لازانيا", "غريبة", "سلطة تونسية", "كرات اللحم", "سردين",
-        "شاورما", "آيس كريم", "فطائر"
+        "كسكسي", "ملوخية", "كمونية", "كفتاجي", "عجة", "مرقاز", "سلاطة مشوية", "عصيدة الزقوقو", "لبلابي",
+        "مقرونة بالصلصة", "بيتزا", "نواسير", "فريكاسي", "شباتي", "بوزة", "بامبالوني", "زلابية", "بسيسة",
+        "مقروض", "إكسبراس", "ڨازوز", "مراوِب", "مقلوب", "طاجين", "براونيز", "تشيز كايك", "كرواسان",
+        "ملوفوف", "ملوّي", "مرمّز", "سلاطة غلة", "ميلكشيك", "باتي", "محمصة", "كعك ورقة", "سمسة",
+        "بقلاوة تونسية", "شاي بالنعناع", "قهوة عربي", "غريبة", "يويو", "طابونة", "روز", "محمصة",
+        "بركوكش", "روز بالخضرة", "إسكالوب بانّيه", "مشوي", "عصبان", "بريك بالبيض", "مرقاز", "لازانيا"
       ],
       "أماكن": [
         "قهوة", "جامع", "سوق", "مكتبة", "مطعم", "شاطئ", "حديقة", "مدرسة", "مستشفى", "مطار",
@@ -160,6 +172,26 @@
         "مترجم", "محقق", "منتج", "مخرج", "محامي", "رائد فضاء", "عالم", "مساعد", "عازف موسيقى",
         "طبيب أسنان", "بائع متجول", "أستاذ جامعي", "مدير فندق", "خطيب", "عامل بناء", "مصور فوتوغرافي",
         "حلاق", "ممثل", "لاعب كرة قدم"
+      ],
+      "لاعبين كرة قدم": [
+        "كيليان مبابي", "إيرلينغ هالاند", "محمد صلاح", "كيفين دي بروين", "أندريس إنييستا", "روبرت ليفاندوفسكي",
+        "نيمار", "لوكا مودريتش", "كريم بنزيمة", "فينيسيوس جونيور", "هاري كين", "فيرجيل فان ديك",
+        "مارك أندريه تير شتيغن", "سيرجيو راموس", "توني كروس", "باولو ديبالا", "جود بيلينغهام", "لامين يامال",
+        "رافينيا", "جمال موسيالا", "إدواردو كامافينغا", "بيدري", "جافي", "روبين دياس", "دانييل كارفاخال",
+        "جون ستونز", "أنتوني مارسيال", "ماتيس دي ليخت", "فرانك كيسي", "إيمليانو مارتينيز", "يوشوا كيميش",
+        "أنطونيو روديغر", "بيير إيميريك أوباميانغ", "فيكتور أوسيمهن", "كريستيان بوليسيتش", "ليون غوريتسكا",
+        "رياض محرز", "أشرف حكيمي", "لويس سواريز", "نجولو كانتي", "تشيور آيموبيلي", "داني كارباخال",
+        "مارسيلو", "ألكسندر أرنولد", "توماس مولر", "غاريث بيل", "إيدرسون", "كيبا أريزابالاغا", "جواو كانسيلو",
+        "لاوتارو مارتينيز", "فيليب كوتينيو", "سيرجي روبرتو", "كينغسلي كومان", "برونو فيرنانديش",
+        "كاي هافيرتس", "دكلان رايس", "ليونيل ميسي", "كريستيانو رونالدو", "بيليه", "رونالدو نازاريو",
+        "دييغو مارادونا", "يوهان كرويف", "لويس فيغو", "رونالدينيو", "آرلين روبين", "مانويل نوير",
+        "فرانك لامبارد", "ديفيد بيكهام", "زين الدين زيدان", "أليساندرو ديل بييرو", "ريكياردو كاكا",
+        "سيرجيو بوسكيتس", "فرانك ريكارد", "توماس مولر", "راؤول غونزاليس", "غاريث بيل", "رايان جيغز",
+        "إيكر كاسياس"
+      ],
+      "فاكهة وخضار": [
+        "تفاح", "موز", "برتقال", "مانجو", "فراولة", "بطيخ", "أناناس", "خوخ", "كمثرى", "عنب",
+        "طماطم", "جزر", "بروكلي", "سبانخ", "خس", "خيار", "كوسا", "باذنجان", "فلفل حلو", "بصل", "ثوم", "بطاطا"
       ]
     };
 
@@ -167,45 +199,57 @@
       selectedTheme = document.getElementById("themeSelect").value;
       document.getElementById("step1").style.display = "none";
       document.getElementById("step2").style.display = "block";
-    }
-
-    function startGame() {
-      playerCount = parseInt(document.getElementById("playerCount").value);
-      const words = themes[selectedTheme];
-      const randomWord = words[Math.floor(Math.random() * words.length)];
-      spyIndex = Math.floor(Math.random() * playerCount);
-      players = Array.from({ length: playerCount }, (_, i) => (i === spyIndex ? "جاسوس" : randomWord));
-      document.getElementById("step2").style.display = "none";
-      document.getElementById("step3").style.display = "block";
-      updatePlayerInfo();
-    }
-
-    function updatePlayerInfo() {
-      document.getElementById("currentPlayer").innerText = currentPlayer + 1;
-      document.getElementById("wordDisplay").style.display = "none";
-    }
-
-    function revealWord() {
-      document.getElementById("wordDisplay").style.display = "block";
-      document.getElementById("wordDisplay").innerText = players[currentPlayer] === "جاسوس" ? 
-        "أنت الجاسوس!" : `كلمتك هي: ${players[currentPlayer]}`;
-    }
-
-    function nextPlayer() {
-      if (currentPlayer + 1 < playerCount) {
-        currentPlayer++;
-        revealed = false;
-        updatePlayerInfo();
-      } else {
-        document.getElementById("step3").style.display = "none";
-        document.getElementById("step4").style.display = "block";
+      
+      if (selectedTheme === "فاكهة وخضار") {
+        displayFruitsAndVegetables();
       }
     }
 
+    function displayFruitsAndVegetables() {
+      const listContainer = document.getElementById("fruitsAndVegetablesList");
+      const fruitsAndVegetables = themes["فاكهة وخضار"];
+      listContainer.innerHTML = fruitsAndVegetables.map(item => `<li>${item}</li>`).join('');
+      document.getElementById("fruitsAndVegetablesSection").style.display = "block";
+    }
+
+    function startGame() {
+      playerCount = document.getElementById("playerCount").value;
+      players = generatePlayers();
+      spyIndex = Math.floor(Math.random() * playerCount);
+      document.getElementById("step2").style.display = "none";
+      document.getElementById("step3").style.display = "block";
+      displayWord();
+    }
+
+    function generatePlayers() {
+      return [...Array(playerCount)].map((_, i) => ({
+        name: `لاعب ${i + 1}`,
+        isSpy: i === spyIndex
+      }));
+    }
+
+    function displayWord() {
+      const wordDisplay = document.getElementById("wordDisplay");
+      const words = themes[selectedTheme];
+      const word = words[Math.floor(Math.random() * words.length)];
+      wordDisplay.innerHTML = spyIndex === currentPlayer ? "الجاسوس" : word;
+      wordDisplay.style.display = "block";
+    }
+
+    function nextPlayer() {
+      currentPlayer++;
+      if (currentPlayer === playerCount) {
+        currentPlayer = 0;
+      }
+      document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+      revealed = false;
+      document.getElementById("wordDisplay").style.display = "none";
+    }
+
     function resetGame() {
-      currentStep = 1;
       document.getElementById("step4").style.display = "none";
       document.getElementById("step1").style.display = "block";
+      currentStep = 1;
     }
   </script>
 
