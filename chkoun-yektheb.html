@@ -5,21 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>شكون يكذب؟</title>
   <style>
-    /* General Reset */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
     body {
-      background-image: url('backtn.jpg'); /* Set background image */
+      background-image: url('backtn.jpg');
       background-size: cover;
       background-position: center;
       color: white;
       font-family: sans-serif;
       text-align: center;
-      margin: 0;
-      padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -66,22 +63,11 @@
       width: 40px;
       height: 40px;
     }
-
-    /* Mobile responsive styles */
     @media (max-width: 600px) {
-      h1 {
-        font-size: 1.8rem;
-      }
-      h2 {
-        font-size: 1.2rem;
-      }
-      .button {
-        font-size: 0.9rem;
-      }
-      .instagram-link img {
-        width: 35px;
-        height: 35px;
-      }
+      h1 { font-size: 1.8rem; }
+      h2 { font-size: 1.2rem; }
+      .button { font-size: 0.9rem; }
+      .instagram-link img { width: 35px; height: 35px; }
     }
   </style>
 </head>
@@ -90,7 +76,7 @@
   <div>
     <h1>💬 شكون يكذب؟</h1>
 
-    <!-- Step 1: Choose Theme -->
+    <!-- Step 1 -->
     <div id="step1">
       <h2>اختار الثيم</h2>
       <select id="themeSelect">
@@ -103,7 +89,7 @@
       <button class="button" onclick="goToStep2()">التالي</button>
     </div>
 
-    <!-- Step 2: Choose Player Count -->
+    <!-- Step 2 -->
     <div id="step2" style="display:none;">
       <h2>اختار عدد اللاعبين</h2>
       <input type="number" id="playerCount" min="3" max="10" value="4">
@@ -111,65 +97,56 @@
       <button class="button" onclick="startGame()">ابدأ اللعبة</button>
     </div>
 
-    <!-- Step 3: Show Player's Word -->
+    <!-- Step 3 -->
     <div id="step3" style="display:none;">
       <h2>اللاعب <span id="currentPlayer">1</span>، شوف دورك</h2>
       <button class="button" onclick="revealWord()">كشف</button>
-      <p id="wordDisplay" style="display:none;"></p>
+      <p id="wordDisplay" style="display:none; font-size: 1.5rem; margin: 15px 0;"></p>
       <button class="button" onclick="nextPlayer()">التالي</button>
     </div>
 
-    <!-- Step 4: End Game -->
+    <!-- Step 4 -->
     <div id="step4" style="display:none;">
       <h2>اللعبة بدات! ناقشوا و اكتشفوا الجاسوس!</h2>
       <button class="button" onclick="resetGame()">إعادة اللعبة</button>
     </div>
 
-    <!-- Instagram Link -->
     <a href="https://www.instagram.com/mosaab_abassi/" target="_blank" class="instagram-link">
       <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram Icon">
     </a>
   </div>
 
-  <!-- Football Players Section -->
-  <div id="footballPlayersSection" style="display:none;">
-    <h2>أشهر 100 لاعب كرة قدم 2025</h2>
-    <ul id="footballPlayersList">
-      <!-- Football Players will be dynamically added here -->
-    </ul>
-  </div>
+  <script>
+    let playerCount = 4;
+    let players = [];
+    let spyIndex = null;
+    let currentPlayer = 0;
+    let selectedTheme = "ماكلة تونسية";
+    let secretWord = "";
 
-<script>
-  let currentStep = 1;
-  let playerCount = 4;
-  let players = [];
-  let spyIndex = null;
-  let currentPlayer = 0;
-  let selectedTheme = "ماكلة تونسية";
-  let secretWord = "";
+    const themes = {
       "ماكلة تونسية": [
         "كسكسي", "ملوخية", "كمونية", "كفتاجي", "عجة", "مرقاز", "سلاطة مشوية", "عصيدة الزقوقو", "لبلابي",
         "مقرونة بالصلصة", "بيتزا", "نواسير", "فريكاسي", "شباتي", "بوزة", "بامبالوني", "زلابية", "بسيسة",
         "مقروض", "إكسبراس", "ڨازوز", "مراوِب", "مقلوب", "طاجين", "براونيز", "تشيز كايك", "كرواسان",
         "ملوفوف", "ملوّي", "مرمّز", "سلاطة غلة", "ميلكشيك", "باتي", "محمصة", "كعك ورقة", "سمسة",
-        "بقلاوة تونسية", "شاي بالنعناع", "قهوة عربي", "غريبة", "يويو", "طابونة", "روز", "محمصة",
-        "بركوكش", "روز بالخضرة", "إسكالوب بانّيه", "مشوي", "عصبان", "بريك بالبيض", "مرقاز", "لازانيا"
+        "بقلاوة تونسية", "شاي بالنعناع", "قهوة عربي", "غريبة", "يويو", "طابونة", "روز", "بركوكش",
+        "روز بالخضرة", "إسكالوب بانّيه", "مشوي", "عصبان", "بريك بالبيض", "لازانيا"
       ],
       "أماكن": [
         "قهوة", "جامع", "سوق", "مكتبة", "مطعم", "شاطئ", "حديقة", "مدرسة", "مستشفى", "مطار",
-        "محطة قطار", "محطة بنزين", "مكتب", "مكتبة عامة", "مسرح", "نزل", "مغسلة", "ورشة", "مخبز",
-        "مركز تجاري", "غابة", "شقة", "مطبخ", "ملعب", "حديقة حيوانات", "محطة باص", "موقف سيارات",
-        "شاطئ البحر", "مكتب بريد", "صيدلية", "مستودع", "حافلة", "قاعة أفراح", "قاعة رياضة", "جامعة",
-        "حانة", "مسبح", "سفارة", "إدارة حكومية", "مقهى إنترنت", "سفينة", "مصنع", "قاعة سينما",
-        "كراج", "سجن", "ثكنة عسكرية", "ملعب جولف", "محطة مترو", "مدينة ملاهي", "كهف"
+        "محطة قطار", "محطة بنزين", "مكتب", "مسرح", "نزل", "مغسلة", "ورشة", "مخبز", "مركز تجاري",
+        "غابة", "شقة", "مطبخ", "ملعب", "حديقة حيوانات", "محطة باص", "موقف سيارات", "مكتب بريد",
+        "صيدلية", "مستودع", "حافلة", "قاعة أفراح", "قاعة رياضة", "جامعة", "حانة", "مسبح",
+        "سفارة", "إدارة حكومية", "مقهى إنترنت", "سفينة", "مصنع", "قاعة سينما", "كراج", "سجن",
+        "ثكنة عسكرية", "ملعب جولف", "محطة مترو", "مدينة ملاهي", "كهف"
       ],
       "وظائف": [
         "طبيب", "مهندس", "مدرس", "شرطي", "محامي", "فنان", "طباخ", "ممرض", "سائق", "صحفي",
         "محاسب", "مبرمج", "طيار", "جندي", "كهربائي", "نجار", "سباك", "مصور", "ميكانيكي", "بائع",
         "مدرب رياضي", "خياط", "كاتب", "مسوق", "فلاح", "عطار", "مدير", "مستشار", "أخصائي تغذية",
-        "مترجم", "محقق", "منتج", "مخرج", "محامي", "رائد فضاء", "عالم", "مساعد", "عازف موسيقى",
-        "طبيب أسنان", "بائع متجول", "أستاذ جامعي", "مدير فندق", "خطيب", "عامل بناء", "مصور فوتوغرافي",
-        "حلاق", "ممثل", "لاعب كرة قدم"
+        "مترجم", "محقق", "منتج", "مخرج", "رائد فضاء", "عالم", "عازف موسيقى", "طبيب أسنان",
+        "بائع متجول", "أستاذ جامعي", "مدير فندق", "عامل بناء", "مصور فوتوغرافي", "حلاق", "ممثل", "لاعب كرة قدم"
       ],
       "لاعبين كرة قدم": [
         "كيليان مبابي", "إيرلينغ هالاند", "محمد صلاح", "كيفين دي بروين", "أندريس إنييستا", "روبرت ليفاندوفسكي",
@@ -179,58 +156,56 @@
         "جواو فيليكس", "فرينكي دي يونغ", "فيل فودين", "فيديريكو فالفيردي", "لوكاس هيرنانديز", "جواو موتينيو",
         "إميليانو مارتينيز", "يوشوا كيميش", "أنطونيو روديغر", "بيير إيميريك أوباميانغ", "فيكتور أوسيمهن",
         "كريستيان بوليسيتش", "ليون غوريتسكا", "رياض محرز", "أشرف حكيمي", "لويس سواريز", "نجولو كانتي",
-        "تشيور آيموبيلي", "داني كارباخال", "مارسيلو", "ألكسندر أرنولد", "توماس مولر", "غاريث بيل", "إيدرسون",
-        "كيبا أريزابالاغا", "جواو كانسيلو", "لاوتارو مارتينيز", "فيليب كوتينيو", "سيرجي روبرتو",
-        "كينغسلي كومان", "برونو فيرنانديش", "كاي هافيرتس", "دكلان رايس", "ليونيل ميسي", "كريستيانو رونالدو",
-        "بيليه", "رونالدو نازاريو", "دييغو مارادونا", "يوهان كرويف", "لويس فيغو", "رونالدينيو", "آرلين روبين",
-        "مانويل نوير", "فرانك لامبارد", "ديفيد بيكهام", "زين الدين زيدان", "أليساندرو ديل بييرو", "ريكياردو كاكا",
-        "سيرجيو بوسكيتس",  "توماس مولر", "راؤول غونزاليس", "غاريث بيل", "رايان جيغز", "إيكر كاسياس"
+        "مارسيلو", "ألكسندر أرنولد", "توماس مولر", "غاريث بيل", "إيدرسون", "كيبا أريزابالاغا",
+        "جواو كانسيلو", "لاوتارو مارتينيز", "فيليب كوتينيو", "سيرجي روبرتو", "كينغسلي كومان",
+        "برونو فيرنانديش", "كاي هافيرتس", "دكلان رايس", "ليونيل ميسي", "كريستيانو رونالدو", "بيليه",
+        "رونالدو نازاريو", "دييغو مارادونا", "يوهان كرويف", "لويس فيغو", "رونالدينيو", "آرلين روبين",
+        "مانويل نوير", "فرانك لامبارد", "ديفيد بيكهام", "زين الدين زيدان", "أليساندرو ديل بييرو",
+        "ريكياردو كاكا", "سيرجيو بوسكيتس", "فرانك ريكارد", "راؤول غونزاليس", "رايان جيغز", "إيكر كاسياس"
       ]
     };
 
- function goToStep2() {
-    selectedTheme = document.getElementById("themeSelect").value;
-    document.getElementById("step1").style.display = "none";
-    document.getElementById("step2").style.display = "block";
-  }
-
-  function startGame() {
-    playerCount = parseInt(document.getElementById("playerCount").value);
-    const words = themes[selectedTheme];
-    secretWord = words[Math.floor(Math.random() * words.length)];
-    spyIndex = Math.floor(Math.random() * playerCount);
-    players = Array.from({ length: playerCount }, (_, i) => ({
-      isSpy: i === spyIndex
-    }));
-    currentPlayer = 0;
-    document.getElementById("step2").style.display = "none";
-    document.getElementById("step3").style.display = "block";
-    document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-    document.getElementById("wordDisplay").style.display = "none";
-  }
-
-  function revealWord() {
-    const wordDisplay = document.getElementById("wordDisplay");
-    wordDisplay.innerHTML = players[currentPlayer].isSpy ? "الجاسوس" : secretWord;
-    wordDisplay.style.display = "block";
-  }
-
-  function nextPlayer() {
-    currentPlayer++;
-    if (currentPlayer >= playerCount) {
-      document.getElementById("step3").style.display = "none";
-      document.getElementById("step4").style.display = "block";
-      return;
+    function goToStep2() {
+      selectedTheme = document.getElementById("themeSelect").value;
+      document.getElementById("step1").style.display = "none";
+      document.getElementById("step2").style.display = "block";
     }
-    document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-    document.getElementById("wordDisplay").style.display = "none";
-  }
 
-  function resetGame() {
-    document.getElementById("step4").style.display = "none";
-    document.getElementById("step1").style.display = "block";
-    currentStep = 1;
-  }
-</script>
+    function startGame() {
+      playerCount = parseInt(document.getElementById("playerCount").value);
+      const words = themes[selectedTheme];
+      secretWord = words[Math.floor(Math.random() * words.length)];
+      spyIndex = Math.floor(Math.random() * playerCount);
+      players = Array.from({ length: playerCount }, (_, i) => ({ isSpy: i === spyIndex }));
+      currentPlayer = 0;
+      document.getElementById("step2").style.display = "none";
+      document.getElementById("step3").style.display = "block";
+      document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+      document.getElementById("wordDisplay").style.display = "none";
+    }
+
+    function revealWord() {
+      const wordDisplay = document.getElementById("wordDisplay");
+      wordDisplay.innerHTML = players[currentPlayer].isSpy ? "الجاسوس" : secretWord;
+      wordDisplay.style.display = "block";
+    }
+
+    function nextPlayer() {
+      currentPlayer++;
+      if (currentPlayer >= playerCount) {
+        document.getElementById("step3").style.display = "none";
+        document.getElementById("step4").style.display = "block";
+      } else {
+        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+        document.getElementById("wordDisplay").style.display = "none";
+      }
+    }
+
+    function resetGame() {
+      document.getElementById("step4").style.display = "none";
+      document.getElementById("step1").style.display = "block";
+    }
+  </script>
+
 </body>
 </html>
