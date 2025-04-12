@@ -90,48 +90,38 @@
   <div>
     <h1>💬 شكون يكذب؟</h1>
 
-    <!-- Step 1: Enter Name -->
+    <!-- Step 1: Choose Theme -->
     <div id="step1">
-      <h2>أدخل اسمك</h2>
-      <input type="text" id="playerName" placeholder="اكتب اسمك هنا">
-      <br>
-      <button class="button" onclick="goToStep2()">التالي</button>
-    </div>
-
-    <!-- Step 2: Choose Theme -->
-    <div id="step2" style="display:none;">
       <h2>اختار الثيم</h2>
       <select id="themeSelect">
         <option value="ماكلة تونسية">ماكلة تونسية</option>
         <option value="أماكن">أماكن</option>
         <option value="وظائف">وظائف</option>
         <option value="لاعبين كرة قدم">لاعبين كرة قدم</option>
-        <option value="فاكهة وخضار">فاكهة وخضار</option>
       </select>
       <br>
-      <button class="button" onclick="goToStep3()">التالي</button>
+      <button class="button" onclick="goToStep2()">التالي</button>
     </div>
 
-    <!-- Step 3: Choose Player Count -->
-    <div id="step3" style="display:none;">
+    <!-- Step 2: Choose Player Count -->
+    <div id="step2" style="display:none;">
       <h2>اختار عدد اللاعبين</h2>
-      <input type="number" id="playerCount" min="3" max="20" value="4">
+      <input type="number" id="playerCount" min="3" max="10" value="4">
       <br>
       <button class="button" onclick="startGame()">ابدأ اللعبة</button>
     </div>
 
-    <!-- Step 4: Show Player's Word -->
-    <div id="step4" style="display:none;">
+    <!-- Step 3: Show Player's Word -->
+    <div id="step3" style="display:none;">
       <h2>اللاعب <span id="currentPlayer">1</span>، شوف دورك</h2>
       <button class="button" onclick="revealWord()">كشف</button>
       <p id="wordDisplay" style="display:none;"></p>
       <button class="button" onclick="nextPlayer()">التالي</button>
     </div>
 
-    <!-- Step 5: Announce Spy -->
-    <div id="step5" style="display:none;">
-      <h2>اللعبة انتهت! الجاسوس هو:</h2>
-      <p id="spyAnnouncement"></p>
+    <!-- Step 4: End Game -->
+    <div id="step4" style="display:none;">
+      <h2>اللعبة بدات! ناقشوا و اكتشفوا الجاسوس!</h2>
       <button class="button" onclick="resetGame()">إعادة اللعبة</button>
     </div>
 
@@ -139,6 +129,14 @@
     <a href="https://www.instagram.com/mosaab_abassi/" target="_blank" class="instagram-link">
       <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram Icon">
     </a>
+  </div>
+
+  <!-- Football Players Section -->
+  <div id="footballPlayersSection" style="display:none;">
+    <h2>أشهر 100 لاعب كرة قدم 2025</h2>
+    <ul id="footballPlayersList">
+      <!-- Football Players will be dynamically added here -->
+    </ul>
   </div>
 
   <script>
@@ -149,8 +147,6 @@
     let currentPlayer = 0;
     let revealed = false;
     let selectedTheme = "ماكلة تونسية";
-    let playerName = '';
-    let spyPlayers = [];
     const themes = {
       "ماكلة تونسية": [
         "كسكسي", "ملوخية", "كمونية", "كفتاجي", "عجة", "مرقاز", "سلاطة مشوية", "عصيدة الزقوقو", "لبلابي",
@@ -191,68 +187,54 @@
         "مانويل نوير", "فرانك لامبارد", "ديفيد بيكهام", "زين الدين زيدان", "أليساندرو ديل بييرو", "ريكياردو كاكا",
         "سيرجيو بوسكيتس", "فرانك ريكارد", "توماس مولر", "راؤول غونزاليس", "غاريث بيل", "رايان جيغز", "إيكر كاسياس"
       ]
-
     };
 
-    // Show Step 2 after entering the name
     function goToStep2() {
-      playerName = document.getElementById("playerName").value;
-      if (playerName.trim() === "") {
-        alert("يرجى إدخال اسمك");
-        return;
-      }
+      selectedTheme = document.getElementById("themeSelect").value;
       document.getElementById("step1").style.display = "none";
       document.getElementById("step2").style.display = "block";
     }
 
-    // Show Step 3 after selecting the theme
-    function goToStep3() {
-      selectedTheme = document.getElementById("themeSelect").value;
-      document.getElementById("step2").style.display = "none";
-      document.getElementById("step3").style.display = "block";
-    }
-
-    // Start the game
     function startGame() {
       playerCount = document.getElementById("playerCount").value;
-      players = [];
-      spyPlayers = [];
-      for (let i = 0; i < playerCount; i++) {
-        players.push({ id: i + 1, name: `اللاعب ${i + 1}` });
-      }
-      spyIndex = Math.floor(Math.random() * playerCount); // Randomly pick the spy
-      spyPlayers.push(players[spyIndex].name);
-
-      document.getElementById("step3").style.display = "none";
-      document.getElementById("step4").style.display = "block";
-      currentPlayer = 0;
-      revealWord();
+      players = generatePlayers();
+      spyIndex = Math.floor(Math.random() * playerCount);
+      document.getElementById("step2").style.display = "none";
+      document.getElementById("step3").style.display = "block";
+      displayWord();
     }
 
-    function revealWord() {
+    function generatePlayers() {
+      return [...Array(playerCount)].map((_, i) => ({
+        name: `لاعب ${i + 1}`,
+        isSpy: i === spyIndex
+      }));
+    }
+
+    function displayWord() {
       const wordDisplay = document.getElementById("wordDisplay");
       const words = themes[selectedTheme];
       const word = words[Math.floor(Math.random() * words.length)];
-      wordDisplay.innerHTML = word;
+      wordDisplay.innerHTML = spyIndex === currentPlayer ? "الجاسوس" : word;
       wordDisplay.style.display = "block";
     }
 
     function nextPlayer() {
-      currentPlayer = (currentPlayer + 1) % playerCount;
+      currentPlayer++;
+      if (currentPlayer === playerCount) {
+        currentPlayer = 0;
+      }
       document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-      revealWord();
-    }
-
-    // Show the spy at the end
-    function endGame() {
-      document.getElementById("step4").style.display = "none";
-      document.getElementById("step5").style.display = "block";
-      document.getElementById("spyAnnouncement").textContent = `الجاسوس هو: ${spyPlayers[0]}`;
+      revealed = false;
+      document.getElementById("wordDisplay").style.display = "none";
     }
 
     function resetGame() {
-      location.reload();
+      document.getElementById("step4").style.display = "none";
+      document.getElementById("step1").style.display = "block";
+      currentStep = 1;
     }
   </script>
+
 </body>
 </html>
