@@ -139,15 +139,14 @@
     </ul>
   </div>
 
-  <script>
-    let currentStep = 1;
-    let playerCount = 4;
-    let players = [];
-    let spyIndex = null;
-    let currentPlayer = 0;
-    let selectedTheme = "ماكلة تونسية";
-    let secretWord = "";
-    const themes = {
+<script>
+  let currentStep = 1;
+  let playerCount = 4;
+  let players = [];
+  let spyIndex = null;
+  let currentPlayer = 0;
+  let selectedTheme = "ماكلة تونسية";
+  let secretWord = "";
       "ماكلة تونسية": [
         "كسكسي", "ملوخية", "كمونية", "كفتاجي", "عجة", "مرقاز", "سلاطة مشوية", "عصيدة الزقوقو", "لبلابي",
         "مقرونة بالصلصة", "بيتزا", "نواسير", "فريكاسي", "شباتي", "بوزة", "بامبالوني", "زلابية", "بسيسة",
@@ -189,7 +188,7 @@
       ]
     };
 
-    function goToStep2() {
+ function goToStep2() {
     selectedTheme = document.getElementById("themeSelect").value;
     document.getElementById("step1").style.display = "none";
     document.getElementById("step2").style.display = "block";
